@@ -1,0 +1,87 @@
+CREATE DATABASE IF NOT EXISTS `pedidovenda`;
+USE `pedidovenda`;
+
+CREATE TABLE clientes(
+	idcliente INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único do cliente',
+	nome VARCHAR(100) NOT NULL,
+	cidade VARCHAR(100),
+	uf VARCHAR(2)
+);
+CREATE INDEX idx_clientes_nome ON clientes(nome);
+
+CREATE TABLE produtos(
+	idproduto INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único do produto',
+	descricao VARCHAR(100) NOT NULL,
+	precovenda DECIMAL(10,2)
+);
+CREATE INDEX idx_produtos_descricao ON produtos(descricao);
+
+CREATE TABLE pedidos(
+	idpedido INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único do pedido',
+	dtemissao DATETIME COMMENT 'Data emissão do pedido',
+	cliente_id INT,
+	valortotal DECIMAL(10,2),
+	CONSTRAINT fk_cliente_id FOREIGN KEY (cliente_id) REFERENCES clientes(idcliente)
+);
+CREATE INDEX idx_pedidos_cliente_id ON pedidos(cliente_id);
+CREATE INDEX idx_pedidos_dtemissao ON pedidos(dtemissao);
+CREATE INDEX idx_pedidos_dtemissao_cliente_id ON pedidos(dtemissao, cliente_id);
+
+CREATE TABLE produtospedido(
+ 	idprodutospedido INT NOT NULL AUTO_INCREMENT COMMENT 'Contador do item no pedido',
+  pedido_id INT NOT NULL,	
+ 	produto_id INT,
+ 	qtde DECIMAL(10,2),
+ 	vlrunitario DECIMAL(10,2) COMMENT 'Valor unitário',
+ 	vlrtotal DECIMAL(10,2),
+ 	PRIMARY KEY (idprodutospedido, pedido_id),
+	CONSTRAINT fk_pedido_id FOREIGN KEY (pedido_id) REFERENCES pedidos(idpedido),
+	CONSTRAINT fk_produto_id FOREIGN KEY (produto_id) REFERENCES produtos(idproduto)
+);
+CREATE INDEX idx_pedidos_pedido_id ON produtospedido(pedido_id);
+CREATE INDEX idx_pedidos_produto_id ON produtospedido(produto_id);
+CREATE INDEX idx_produtospedidos ON produtospedido(pedido_id, produto_id);
+
+INSERT INTO `produtos` (`idproduto`, `descricao`, `precovenda`) VALUES
+	(1, 'ABACATE', 2.99),
+	(2, 'MELAO', 3.00),
+	(3, 'BANANA', 2.55),
+	(4, 'LARANJA', 4.00),
+	(5, 'MAÇÃ', 5.00),
+	(6, 'UVA', 1.50),
+	(7, 'ARROZ', 2.50),
+	(8, 'FEIJAO', 5.00),
+	(9, 'FARINHA', 3.95),
+	(10, 'MACARRÃO', 4.60),
+	(11, 'TRIGO', 4.40),
+	(12, 'BISCOITO RECHEADO', 3.30),
+	(13, 'BISCOITO DE SAL', 3.20),
+	(14, 'SAL', 1.90),
+	(15, 'OLEO', 9.00),
+	(16, 'AZEITE', 14.00),
+	(17, 'MOLHO DE TOMATE', 1.75),
+	(18, 'MAIONESE', 8.95),
+	(19, 'CALABRESA', 12.30),
+	(20, 'PRESUNTO', 15.45);
+
+INSERT INTO `clientes` (`idcliente`, `nome`, `cidade`, `uf`) VALUES
+	(1, 'MARIA', 'RIO DE JANEIRO', 'RJ'),
+	(2, 'JOSE', 'RIO DE JANEIRO', 'RJ'),
+	(3, 'ANTONIO', 'SÃO PAULO', 'SP'),
+	(4, 'ALVARO', 'SÃO PAULO', 'SP'),
+	(5, 'ALEX', 'MONTES CLAROS', 'MG'),
+	(6, 'WILLIAN', 'MONTES CLAROS', 'MG'),
+	(7, 'WALEN', 'MONTES CLAROS', 'MG'),
+	(8, 'ROGERIO', 'CURVELO', 'MG'),
+	(9, 'RICARDO', 'CURVELO', 'MG'),
+	(10, 'FABIANE', 'BELO HORIZONTE', 'MG'),
+	(11, 'VIVIANE', 'SETE LAGOAS', 'MG'),
+	(12, 'VILMA', 'CAPITÃO ENEAS', 'MG'),
+	(13, 'DIEGO', 'CAPITÃO ENEAS', 'MG'),
+	(14, 'DIEGO M', 'MONTES CLAROS', 'MG'),
+	(15, 'LUA', 'MONTES CLAROS', 'MG'),
+	(16, 'LUANA', 'MONTES CLAROS', 'MG'),
+	(17, 'ISIS', 'MONTES CLAROS', 'MG'),
+	(18, 'ANA', 'MONTES CLAROS', 'MG'),
+	(19, 'JULIA', 'ENGENHEIRO NAVARRO', 'MG'),
+	(20, 'RAQUEL', 'MONJOLOS', 'MG');
